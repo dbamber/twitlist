@@ -87,7 +87,6 @@ app.post('/api/details', function(req, res) {
 	};
 
 	consumer().post('https://api.twitter.com/1.1/users/lookup.json', req.session.oauthAccessToken, req.session.oauthAccessTokenSecret, request, function(error, data, response) {
-
 		if (error) {
 			console.log('error');
 			res.send('oops');

@@ -1,9 +1,22 @@
-<div>
-User: {{user.id}}
-Name: {{user.name}}
-<img ng-src="{{user.profile_image_url}}"/>
+<div class="well">
+    <div class="media">
+        <a class="pull-left" href="#"><img class="media-object" ng-src="{{user.profile_image_url}}" /></a>
+        <div class="media-body">
+            <h4 class="media-heading">
+                {{user.name}}
+            </h4>
+            {{user.description}}
+        </div>
+    </div>
+</div>
+<div class="well">
+	<div>Toggle the lists for this member below</div>
+        <span ng-repeat="list in lists">
+            <span class="label">
+                {{list.name}}
+            </span>
+        </span>
 </div>
 
-
-<a href="#/" class="btn btn-success">Back</a>
+<a href="#/friend/{{prev}}" class="btn btn-success">Previous</a>
 <a href="#/friend/{{next}}" class="btn btn-success">Next</a>

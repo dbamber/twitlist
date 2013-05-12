@@ -13,17 +13,6 @@ angular.module('TwitterList', []).factory('TwitterList', function($http, $q) {
 
 			return deferred.promise;
 		},
-
-		getLists: function() {
-			return methods.query().then(function(data) {
-				return data.map(function(i) {
-					return {
-						id: i.id,
-						name: i.name
-					}
-				});
-			});
-		}
 	};
 	return methods;
 });
@@ -91,8 +80,35 @@ angular.module('PagedFriendsList', ['Friends']).factory('PagedFriendsList', func
 		}
 	}
 });
+angular.module('FriendDetails', ['PagedFriendsList', 'PagedFriendsDetails'])
+	.factory('FriendDetails', function(PagedFriendsDetails, $q, PagedFriendsList) {
 
-angular.module('twitlist', ['Friends', 'TwitterList', 'PagedFriendsList', 'PagedFriendsDetails']).config(function($routeProvider) {
+	return {
+		get: function(friendId) {
+			var page = Math.floor(friendId / 100);
+
+			return $q.all([PagedFriendsList.get(page), PagedFriendsDetails.get(page)]).then(function(results) {
+				var pageOfIds = results[0];
+				var pageOfDetails = results[1];
+
+				var index = friendId - (page * 100);
+				var id = pageOfIds[index];
+
+				for (var i = 0; i < pageOfDetails.length; i++) {
+					if (pageOfDetails[i].id == id) {
+
+						return pageOfDetails[i];
+
+					}
+				}
+				return {};
+			});
+
+		}
+	}
+});
+
+angular.module('twitlist', ['Friends', 'TwitterList', 'PagedFriendsList', 'PagedFriendsDetails', 'FriendDetails']).config(function($routeProvider) {
 	$routeProvider.when('/', {
 		controller: HomeCtrl,
 		templateUrl: '/view/home.htm'
@@ -108,35 +124,24 @@ function HomeCtrl($scope, $location, $routeParams, FriendsList, TwitterList) {
 	FriendsList.query().then(function(data) {
 		$scope.friendsTotal = data.ids.length;
 	});
-	
-	TwitterList.query().then(function(data){
+
+	TwitterList.query().then(function(data) {
 		$scope.lists = data;
 	});
-
 }
 
-function FriendCtlr($scope, $routeParams, $q, PagedFriendsDetails, PagedFriendsList) {
+function FriendCtlr($scope, $routeParams, FriendDetails, TwitterList) {
 	var friendId = parseInt($routeParams.friendId);
 
 	$scope.friendId = friendId;
+	$scope.prev = friendId - 1;
+	$scope.next = friendId + 1;
 
-	var page = Math.floor(friendId / 100);
-
-	$q.all([PagedFriendsList.get(page), PagedFriendsDetails.get(page)]).then(function(results) {
-		var pageOfIds = results[0];
-		var pageOfDetails = results[1];
-
-		var index = friendId - (page * 100);
-		var id = pageOfIds[index];
-
-		for (var i = 0; i < pageOfDetails.length; i++) {
-			if (pageOfDetails[i].id == id) {
-
-				$scope.user = pageOfDetails[i];
-				break;
-			}
-		}
+	FriendDetails.get(friendId).then(function(details) {
+		$scope.user = details;
 	});
 
-	$scope.next = friendId + 1;
+	TwitterList.query().then(function(data) {
+		$scope.lists = data;
+	});
 }
