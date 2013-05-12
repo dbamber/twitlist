@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html ng-app="twitlist">
+    
+    <head>
+        <title>
+            Twitlist - Super Simple Twitter Lists
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="css/site.css" rel="stylesheet" media="screen">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js">
+                                
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-resource.min.js">
+                                
+        </script>
+        <script src="http://code.jquery.com/jquery.js">
+                                
+        </script>
+        <script src="/js/app.js">
+                                
+        </script>
+        <style type="text/css">
+            body { padding-top: 60px; }
+        </style>
+    </head>
+    
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="">
+                                <a href="#/">Home</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div ng-view>
+            </div>
+        </div>
+    </body>
+
+</html>
