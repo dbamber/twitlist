@@ -48,34 +48,33 @@ app.get('/api/lists', function(req, res) {
 	console.log('lists');
 
 	request('https://api.twitter.com/1.1/lists/ownerships.json?count=1000', req).then(function(data) {
-		var promises = [];
+
 		data = JSON.parse(data);
 
-		for (var i = 0; i < data.lists.length; i++) {
-			var list = data.lists[i];
-
-			var scoped = (function(list) {
-				return function(data) {
-					data = JSON.parse(data);
-					return {
-						id: list.id,
-						name: list.name,
-						members: data.users.map(function(user) {
-							return user.id
-						})
-					};
+		var scoped = (function(list) {
+			return function(data) {
+				data = JSON.parse(data);
+				return {
+					id: list.id,
+					name: list.name,
+					members: data.users.map(function(user) {
+						return user.id
+					})
 				};
-			});
+			};
+		});
 
-			var promise = request('https://api.twitter.com/1.1/lists/members.json?list_id=' + list.id, req).then(scoped(list));
+		var promises = data.lists.map(function(list) {
 
-			promises.push(promise);
-		}
+
+			return request('https://api.twitter.com/1.1/lists/members.json?list_id=' + list.id, req).then(scoped(list));
+
+		});
 
 		when.all(promises).then(function(items) {
 			res.send(items);
 		});
-		
+
 	}).otherwise(function(error) {
 		console.log(error);
 		res.send('oops');
@@ -86,11 +85,9 @@ app.post('/api/details', function(req, res) {
 	var request = {
 		user_id: req.body.join()
 	};
-	console.log(request);
 
 	consumer().post('https://api.twitter.com/1.1/users/lookup.json', req.session.oauthAccessToken, req.session.oauthAccessTokenSecret, request, function(error, data, response) {
 
-		console.log('done');
 		if (error) {
 			console.log('error');
 			res.send('oops');
