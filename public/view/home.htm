@@ -1,0 +1,19 @@
+<div class="well">
+    You currently have {{friendsTotal}} friends. Click the button to begin
+    sorting!
+</div>
+<div class="well">
+    <div>
+        You currently have {{lists.length}} lists
+    </div>
+    <div>
+        <span ng-repeat="list in lists">
+            <span class="label">
+                {{list.name}} ({{list.members.length}})
+            </span>
+        </span>
+    </div>
+</div>
+<div>
+    <a href="#/friend/0" class="btn btn-success">Start!</a>
+</div>
