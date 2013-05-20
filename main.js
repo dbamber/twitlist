@@ -122,6 +122,7 @@ app.get('/callback', function(req, res) {
 			req.session.oauthAccessTokenSecret = oauthAccessTokenSecret;
 
 			request("https://api.twitter.com/1.1/account/verify_credentials.json", req).then(function(data) {
+				data = JSON.parse(data);
 				req.session.screen_name = data['screen_name'];
 				res.redirect('/app.htm');
 			});
